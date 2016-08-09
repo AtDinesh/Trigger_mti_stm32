@@ -28,7 +28,7 @@ char trigger_control_OFF[1] = {0x43};
 
 void setup()
 {
-	Serial.begin(115200); // Ignored by Maple. But needed by boards using hardware serial via a USB to Serial adaptor
+	Serial.begin(1000000); // Ignored by Maple. But needed by boards using hardware serial via a USB to Serial adaptor
     // Set up the LED to blink 
     pinMode(LED_PIN, OUTPUT); //output configured : 3.3V 
 
