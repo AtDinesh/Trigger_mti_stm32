@@ -21,7 +21,7 @@ void handler_count2(void);
 int toggle = 0;
 int toggle_up = toggle^1;
 
-bool trigger_end = false;
+boolean trigger_end = false;
 
 char trigger_control_ON[1] = {0x42};
 char trigger_control_OFF[1] = {0x43};
@@ -34,7 +34,7 @@ void setup()
     pinMode(LED_PIN, OUTPUT); //output configured : 3.3V 
 
     // Set up BUT for input
-    pinMode(BUTTON_PIN, INPUT_PULLUP);
+//    pinMode(BUTTON_PIN, INPUT_PULLUP);
 
     //Set up output for trigger
      pinMode(TRIGGER_PIN, OUTPUT); //output configured : 3.3V 
@@ -82,9 +82,10 @@ void loop() {
 //        }
 //        delay(1);
 //    }
-  if(trigger_end){
+  if(trigger_end==true){
     Serial.write(trigger_control_OFF,1);
     trigger_end = false;
+    delayMicroseconds(10000);
   }
 // Write configuration part with COM
 }
