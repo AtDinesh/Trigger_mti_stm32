@@ -10,7 +10,7 @@
  */
 
 #define LED_PIN 33
-#define BUTTON_PIN 32
+//#define BUTTON_PIN 32
 #define TRIGGER_PIN 20
 #define LED_RATE 33000    // in microseconds
 
@@ -20,6 +20,8 @@ void handler_count2(void);
 
 int toggle = 0;
 int toggle_up = toggle^1;
+
+bool trigger_end = false;
 
 char trigger_control_ON[1] = {0x42};
 char trigger_control_OFF[1] = {0x43};
@@ -80,7 +82,10 @@ void loop() {
 //        }
 //        delay(1);
 //    }
-
+  if(trigger_end){
+    Serial.write(trigger_control_OFF,1);
+    trigger_end = false;
+  }
 // Write configuration part with COM
 }
 
@@ -91,17 +96,20 @@ void handler_led(void) {
     digitalWrite(TRIGGER_PIN, toggle_up);
     delayMicroseconds(2000); // maintain HIGH level on digital output for 2 ms
     digitalWrite(TRIGGER_PIN, toggle);
+    //Cannot write another character through USB serial --> will not have time.
+    //set a boolean to true --> the loop() will write the last character through USB.
+    trigger_end = true;
     digitalWrite(LED_PIN, toggle);
 
 } 
 
-void handler_down(void) {
+/*void handler_down(void) {
     //toggle ^= 1;
     digitalWrite(LED_PIN, toggle);
     Serial.write(trigger_control_OFF,1); //send a signal through USB to computer to prevent that camera is being triggered
     digitalWrite(TRIGGER_PIN, toggle);
 
-} 
+}*/ 
 
 //void handler1(void) {
 //    count1++;
