@@ -19,9 +19,7 @@ void handler_count1(void);
 void handler_count2(void);
 
 int toggle = 0;
-
-int count1 = 0;
-int count2 = 0;
+int toggle_up = toggle^1;
 
 char trigger_control_ON[1] = {0x42};
 char trigger_control_OFF[1] = {0x43};
@@ -29,6 +27,7 @@ char trigger_control_OFF[1] = {0x43};
 void setup()
 {
 	Serial.begin(1000000); // Ignored by Maple. But needed by boards using hardware serial via a USB to Serial adaptor
+  delay(1000);
     // Set up the LED to blink 
     pinMode(LED_PIN, OUTPUT); //output configured : 3.3V 
 
@@ -42,7 +41,9 @@ void setup()
     Timer2.setChannel1Mode(TIMER_OUTPUTCOMPARE);
     Timer2.setPeriod(LED_RATE); // in microseconds
     Timer2.setCompare1(1);      // overflow might be small
+    //Timer2.setCompare2(65535);
     Timer2.attachCompare1Interrupt(handler_led);
+    //Timer2.attachCompare2Interrupt(handler_down);
 
     // Setup Counting Timers
     Timer3.setChannel1Mode(TIMER_OUTPUTCOMPARE);
@@ -79,18 +80,27 @@ void loop() {
 //        }
 //        delay(1);
 //    }
+
+// Write configuration part with COM
 }
 
 void handler_led(void) {
-    toggle ^= 1;
-    digitalWrite(LED_PIN, toggle);
+    //toggle ^= 1;
+    digitalWrite(LED_PIN, toggle_up);
     Serial.write(trigger_control_ON,1); //send a signal through USB to computer to prevent that camera is being triggered
-    digitalWrite(TRIGGER_PIN, toggle);
+    digitalWrite(TRIGGER_PIN, toggle_up);
     delayMicroseconds(2000); // maintain HIGH level on digital output for 2 ms
-    toggle ^= 1;
     digitalWrite(TRIGGER_PIN, toggle);
-    Serial.write(trigger_control_OFF,1); //send a signal through USB to computer to prevent that camera trigger stopped
     digitalWrite(LED_PIN, toggle);
+
+} 
+
+void handler_down(void) {
+    //toggle ^= 1;
+    digitalWrite(LED_PIN, toggle);
+    Serial.write(trigger_control_OFF,1); //send a signal through USB to computer to prevent that camera is being triggered
+    digitalWrite(TRIGGER_PIN, toggle);
+
 } 
 
 //void handler1(void) {
